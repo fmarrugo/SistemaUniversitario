@@ -3,7 +3,7 @@ package com.miapp.modelo;
 /**
  * Modelo: representa la entidad Estudiante.
  */
-public final class Estudiante {  
+public class Estudiante extends Persona{  
 
     private static int totalEstudiantes = 0;
     public static final int PROMEDIO_MINIMO = 0;
@@ -11,20 +11,21 @@ public final class Estudiante {
     public static final String CARRERA_PREDETERMINADA = "Sin especificar";
 
     // ── Atributos de instancia ────────────────────────────────────────────────
-    private int    id;
-    private String nombre;
-    private String apellido;
     private String carrera;
     private double promedio;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
-    public Estudiante(int id, String nombre, String apellido, String carrera, double promedio) {
-        this.id       = id;
-        this.nombre   = nombre;
-        this.apellido = apellido;
-        this.carrera  = carrera;
-   
+    public Estudiante(String carrera, double promedio) {
+        this.carrera = carrera;
+        this.promedio = promedio;
+    }
+
+    public Estudiante(String carrera, double promedio, int id, String nombre, String apellido) {
+        super(id, nombre, apellido);
+        this.carrera = carrera;
+        this.promedio = promedio;
+        
         if (promedio >= PROMEDIO_MINIMO && promedio <= PROMEDIO_MAXIMO) {
             this.promedio = promedio;
         } else {
@@ -32,7 +33,7 @@ public final class Estudiante {
         }
         
         // nuevo: Incrementa el contador estático de estudiantes
-        totalEstudiantes++;
+        totalEstudiantes++;        
     }
 
     // ── Métodos estáticos (de clase) ──────────────────────────────────────────
@@ -51,19 +52,6 @@ public final class Estudiante {
     }
 
     // ── Getters ──────────────────────────────────────────────────────────────
-
-    public int getId() { 
-        return id; 
-    }
-
-    public String getNombre() { 
-        return nombre; 
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
     public String getCarrera() { 
         return carrera; 
     }
@@ -73,19 +61,6 @@ public final class Estudiante {
     }
 
     // ── Setters ──────────────────────────────────────────────────────────────
-
-    public void setId(int id) { 
-        this.id = id; 
-    }
-
-    public void setNombre(String nombre) { 
-        this.nombre = nombre; 
-    }
-
-    public void setApellido(String apellido) { 
-        this.apellido = apellido; 
-    }
-
     public void setCarrera(String carrera) { 
         this.carrera = carrera; 
     }
@@ -106,10 +81,15 @@ public final class Estudiante {
      */
     @Override
     public final String toString() {
-        return "ID: " + id
-             + " | Nombre: " + nombre
-             + " | Apellido: " + apellido   
+        return "ID: " + getId()
+             + " | Nombre: " + getNombre()
+             + " | Apellido: " + getApellido()   
              + " | Carrera: " + carrera
              + " | Promedio: " + String.format("%.2f", promedio);
+    }
+
+    @Override
+    public double calcularPago() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
