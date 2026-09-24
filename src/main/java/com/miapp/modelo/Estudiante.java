@@ -16,11 +16,6 @@ public class Estudiante extends Persona{
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
-    public Estudiante(String carrera, double promedio) {
-        this.carrera = carrera;
-        this.promedio = promedio;
-    }
-
     public Estudiante(String carrera, double promedio, int id, String nombre, String apellido) {
         super(id, nombre, apellido);
         this.carrera = carrera;

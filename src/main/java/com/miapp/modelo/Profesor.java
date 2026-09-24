@@ -4,18 +4,18 @@
  */
 package com.miapp.modelo;
 
+import com.miapp.servicios.IBuscador;
+
 /**
  *
  * @author Usuario
  */
-public class Profesor extends Persona{
+public class Profesor extends Persona implements IBuscador{
     private double salarioBase;
 
-    public Profesor() {
-    }
-
-    public Profesor(int id, String nombre, String apellido) {
+    public Profesor(int id, String nombre, String apellido, double salarioBase) {
         super(id, nombre, apellido);
+        this.salarioBase = salarioBase;
     }
 
     public double getSalarioBase() {
@@ -32,6 +32,21 @@ public class Profesor extends Persona{
 
     @Override
     public double calcularPago() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void buscarEstudiante(String criterio) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void buscarEstudiantePorCarrera(String carrera) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void cargarDatos() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
