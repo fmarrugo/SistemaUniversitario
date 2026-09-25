@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.miapp.servicios;
+import com.miapp.modelo.Curso;
 
 /**
  *
@@ -13,4 +14,5 @@ public interface IBuscador {
     void buscarEstudiante(String criterio);
     void buscarEstudiantePorCarrera(String carrera);
     void cargarDatos();
+    void inscribirCurso(Curso curso);
 }

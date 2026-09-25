@@ -10,7 +10,7 @@ package com.miapp.modelo;
  */
 public abstract class Persona {
     private int    id;
-    String nombre;
+    private String nombre;
     private String apellido;
 
     public Persona() {
@@ -46,5 +46,9 @@ public abstract class Persona {
         this.apellido = apellido;
     }
         
+    @Override
+    public String toString(){
+        return "ID: " + id + " | Nombre: " + nombre + apellido;
+    }
     public abstract double calcularPago();
 }
