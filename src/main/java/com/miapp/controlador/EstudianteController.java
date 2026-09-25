@@ -50,6 +50,14 @@ public class EstudianteController implements IBuscador {
         buscarPorCarrera(carrera);
     }
 
+    @Override
+    public void inscribirCurso(Curso curso) {
+        if (curso == null) {
+            return;
+        }
+        System.out.println("Procesando inscripción del curso: " + curso.getCodigo());
+    }
+    
     // ── Carga de datos iniciales ──────────────────────────────────────────────
 
     private void inicializarEstudiantes() {
@@ -81,8 +89,8 @@ public class EstudianteController implements IBuscador {
     private void buscarPorCriterio(String criterio) {
 
         // Validación básica usando constante final
-        if (criterio == null || criterio.isEmpty()) {
-            vista.mostrarError(MENSAJE_BUSQUEDA_VACIA);
+        if (criterio == null || criterio.trim().isEmpty()) {
+            if (vista != null) vista.mostrarError(MENSAJE_BUSQUEDA_VACIA);
             return;
         }
 
@@ -152,7 +160,7 @@ public class EstudianteController implements IBuscador {
 
     public Estudiante obtenerEstudiantePorId(int id) {
         for (Estudiante e : estudiantes) {
-            if (e.getId() == id) {
+            if (e != null && e.getId() == id) {
                 return e;
             }
         }
@@ -210,10 +218,7 @@ public class EstudianteController implements IBuscador {
                             Estudiante.getTotalEstudiantes());
 
         return true;
-    }
+    } 
 
-    @Override
-    public void inscribirCurso(Curso curso) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+
 }
