@@ -50,5 +50,6 @@ public abstract class Persona {
     public String toString(){
         return "ID: " + id + " | Nombre: " + nombre + apellido;
     }
+    
     public abstract double calcularPago();
 }

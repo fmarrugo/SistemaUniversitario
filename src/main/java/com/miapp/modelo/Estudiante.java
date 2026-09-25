@@ -1,13 +1,18 @@
 package com.miapp.modelo;
 
+import com.miapp.modelo.utilidades.EstadoMatricula;
 import com.miapp.servicios.IBuscador;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Modelo: representa la entidad Estudiante.
  */
-public class Estudiante extends Persona implements IBuscador{  
+public class Estudiante extends Persona implements IBuscador {  
 
     private static int totalEstudiantes = 0;
+    
+    public static final int MAX_MATERIAS = 7;
     public static final int PROMEDIO_MINIMO = 0;
     public static final int PROMEDIO_MAXIMO = 5;
     public static final String CARRERA_PREDETERMINADA = "Sin especificar";
@@ -15,25 +20,38 @@ public class Estudiante extends Persona implements IBuscador{
     // ── Atributos de instancia ────────────────────────────────────────────────
     private String carrera;
     private double promedio;
+    private EstadoMatricula estadoMatricula; // Tipo de dato corregido con Mayúscula inicial
+    private List<Curso> cursosInscritos;
 
-    // ── Constructor ───────────────────────────────────────────────────────────
-
+    // ── Constructores ────────────────────────────────────────────────────────
+    
+    // Constructor principal
     public Estudiante(String carrera, double promedio, int id, String nombre, String apellido) {
         super(id, nombre, apellido);
         this.carrera = carrera;
-        this.promedio = promedio;
+        this.estadoMatricula = EstadoMatricula.ACTIVO;
+        this.cursosInscritos = new ArrayList<>();
         
         if (promedio >= PROMEDIO_MINIMO && promedio <= PROMEDIO_MAXIMO) {
             this.promedio = promedio;
         } else {
-            this.promedio = 0.0;  // Por defecto si está fuera de rango
+            this.promedio = 0.0;
         }
         
-        // nuevo: Incrementa el contador estático de estudiantes
         totalEstudiantes++;        
     }
 
-    // ── Métodos estáticos (de clase) ──────────────────────────────────────────
+    // Constructor por defecto (faltaba agregar)
+    public Estudiante() {
+        super();
+        this.carrera = CARRERA_PREDETERMINADA;
+        this.promedio = 0.0;
+        this.estadoMatricula = EstadoMatricula.ACTIVO;
+        this.cursosInscritos = new ArrayList<>();
+        totalEstudiantes++;
+    }
+
+    // ── Métodos estáticos ─────────────────────────────────────────────────────
 
     public static int getTotalEstudiantes() {
         return totalEstudiantes;
@@ -45,51 +63,57 @@ public class Estudiante extends Persona implements IBuscador{
 
     public static int getProximoId() {  
         return totalEstudiantes + 1;
-    
     }
 
-    // ── Getters ──────────────────────────────────────────────────────────────
+    // ── Getters y Setters ─────────────────────────────────────────────────────
+    
     public String getCarrera() { 
         return carrera; 
+    }
+
+    public void setCarrera(String carrera) { 
+        this.carrera = carrera; 
     }
 
     public double getPromedio() { 
         return promedio; 
     }
 
-    // ── Setters ──────────────────────────────────────────────────────────────
-    public void setCarrera(String carrera) { 
-        this.carrera = carrera; 
-    }
-
-    /**
-     Valida el promedio antes de asignarlo usando constantes finales
-     * @param p promedio a validar (debe estar entre PROMEDIO_MINIMO y PROMEDIO_MAXIMO)
-     */
     public void setPromedio(double p) {
-        // nuevo: Uso de constantes finales para validación
         if (p >= PROMEDIO_MINIMO && p <= PROMEDIO_MAXIMO) {
             this.promedio = p;
         }
     }
 
-    /**
-     Método final: no puede ser sobrescrito por subclases
-     */
+    public EstadoMatricula getEstadoMatricula() {
+        return estadoMatricula;
+    }
+
+    public void setEstadoMatricula(EstadoMatricula estadoMatricula) {
+        this.estadoMatricula = estadoMatricula;
+    }
+
+    public List<Curso> getCursosInscritos() {
+        return cursosInscritos;
+    }
+
+    // ── Implementación de métodos ─────────────────────────────────────────────
+
     @Override
     public final String toString() {
         return "ID: " + getId()
              + " | Nombre: " + getNombre()
              + " | Apellido: " + getApellido()   
              + " | Carrera: " + carrera
-             + " | Promedio: " + String.format("%.2f", promedio);
+             + " | Promedio: " + String.format("%.2f", promedio)
+             + " | Estado: " + estadoMatricula;
     }
 
     @Override
     public double calcularPago() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
     @Override
     public void buscarEstudiante(String criterio) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -107,6 +131,13 @@ public class Estudiante extends Persona implements IBuscador{
 
     @Override
     public void inscribirCurso(Curso curso) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (curso == null) {
+            return;
+        }
+        
+        if (cursosInscritos.size() < MAX_MATERIAS && !cursosInscritos.contains(curso)) {
+            cursosInscritos.add(curso);
+            curso.agregarEstudiante(this);
+        }
     }
 }
