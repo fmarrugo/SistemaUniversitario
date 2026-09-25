@@ -1,5 +1,6 @@
 package com.miapp.controlador;
 
+import com.miapp.modelo.Curso;
 import com.miapp.modelo.Estudiante;
 import com.miapp.servicios.IBuscador;
 import com.miapp.vista.EstudianteView;
@@ -209,5 +210,10 @@ public class EstudianteController implements IBuscador {
                             Estudiante.getTotalEstudiantes());
 
         return true;
+    }
+
+    @Override
+    public void inscribirCurso(Curso curso) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
