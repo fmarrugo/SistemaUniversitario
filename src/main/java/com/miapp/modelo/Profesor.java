@@ -33,8 +33,22 @@ public class Profesor extends Persona{
         System.out.println("Impartiendo clase...");
     }
 
+    public void asignarCurso(Curso curso){
+        if(curso != null && !cursoAsignado.contains(curso)){
+            cursoAsignado.add(curso);
+            curso.setProfesor(this);
+        }
+    }
+    
     @Override
     public double calcularPago() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return salarioBase;
     }
+
+    @Override
+    public String toString() {
+        return "ID: " + getId() + " | Prof. " + getNombre() + " " + getApellido() 
+             + " | Salario: $" + String.format("%.2f", salarioBase);
+    }
+       
 }

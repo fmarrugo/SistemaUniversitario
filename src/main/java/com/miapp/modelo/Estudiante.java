@@ -26,7 +26,7 @@ public class Estudiante extends Persona implements IBuscador {
     // ── Constructores ────────────────────────────────────────────────────────
     
     // Constructor principal
-    public Estudiante(String carrera, double promedio, int id, String nombre, String apellido) {
+    public Estudiante(int id, String nombre, String apellido, String carrera, double promedio) {
         super(id, nombre, apellido);
         this.carrera = carrera;
         this.estadoMatricula = EstadoMatricula.ACTIVO;
