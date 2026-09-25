@@ -166,7 +166,16 @@ public class EstudianteController implements IBuscador {
         }
         return null;
     }
-
+    
+    public String[] obtenerListaProfesores() {
+        return new String[] {
+            "Seleccionar...",
+            "Dr. Carlos Mendoza",
+            "Ing. Ana María Gómez",
+            "Lic. Roberto Silva"
+        };
+    }
+    
     public String[] obtenerCarrerasUnicas() {
         List<String> carreras = new ArrayList<>();
         for (Estudiante e : estudiantes) {

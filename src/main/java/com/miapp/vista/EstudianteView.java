@@ -18,19 +18,36 @@ public class EstudianteView extends JFrame {
     private static final int ALTO_FILA_TABLA = 24;
 
     // ── Constantes finales para textos ─────────────────────────────────────────
-    private static final String TITULO_VENTANA = "Gestión de Estudiantes — MVC (Búsqueda + Agregar)";
+    private static final String TITULO_VENTANA = "Gestión de Estudiantes — MVC (Búsqueda + Agregar + Cursos + Profesores)";
     private static final String TITULO_PANEL_BUSQUEDA = "Buscar estudiante por nombre";
     private static final String TITULO_PANEL_CARRERA = "Buscar por carrera";
     private static final String TITULO_PANEL_AGREGAR = "Agregar nuevo estudiante";
+    private static final String TITULO_PANEL_CURSOS = "Cursos: Inscripción y consulta";
+    private static final String TITULO_PANEL_PROFESORES = "Profesores: agregar y asignar a curso";
+    private static final String TITULO_PANEL_ESTADO = "Estado de matrícula: buscar y cambiar";
     private static final String TITULO_PANEL_RESULTADOS = "Resultados";
+    
+    private static final String LABEL_CURSO = "Curso:";
     private static final String LABEL_NOMBRE = "Nombre:";
     private static final String LABEL_APELLIDO = "Apellido:";
     private static final String LABEL_CARRERA = "Carrera:";
     private static final String LABEL_PROMEDIO = "Promedio:";
+    private static final String LABEL_SALARIO = "Salario base:";
+    private static final String LABEL_PROFESOR = "Profesor:";
+    private static final String LABEL_ESTADO = "Nuevo estado:";
+    
     private static final String BOTON_BUSCAR = "Buscar";
     private static final String BOTON_BUSCAR_CARRERA = "Buscar por Carrera";
     private static final String BOTON_LIMPIAR = "Limpiar";
     private static final String BOTON_AGREGAR = "Agregar Estudiante";
+    private static final String BOTON_VER_ESTUDIANTES = "Ver estudiantes del curso";
+    private static final String BOTON_INSCRIBIR_CURSO = "Inscribir en curso";
+    private static final String BOTON_AGREGAR_PROFESOR = "Agregar Profesor";
+    private static final String BOTON_VER_CURSOS_PROF = "Ver cursos del profesor";
+    private static final String BOTON_ASIGNAR_CURSO = "Asignar a curso";
+    private static final String BOTON_BUSCAR_ESTADO = "Buscar por estado";
+    private static final String BOTON_CAMBIAR_ESTADO = "Cambiar estado";
+    
     private static final String OPCION_SELECCIONAR = "Seleccionar...";
     private static final String MENSAJE_INICIAL = "Ingrese un nombre o seleccione una carrera y presione Buscar.";
     private static final String MENSAJE_ENCONTRADO_UNO = "Se encontró 1 estudiante.";
@@ -42,12 +59,24 @@ public class EstudianteView extends JFrame {
     private static final Color COLOR_BOTON_CARRERA = new Color(76, 175, 80);
     private static final Color COLOR_BOTON_LIMPIAR = new Color(244, 67, 54);
     private static final Color COLOR_BOTON_AGREGAR = new Color(103, 58, 183);
+    private static final Color COLOR_BOTON_TEAL = new Color(0, 150, 136);
+    private static final Color COLOR_BOTON_NARANJA = new Color(240, 173, 78);
+    private static final Color COLOR_BOTON_INDIGO = new Color(63, 81, 181);
     private static final Color COLOR_BOTON_TEXTO = Color.WHITE;
     private static final Color COLOR_ESTADO_TEXTO = Color.GRAY;
 
     // ── Columnas de la tabla (constante final) ─────────────────────────────────
     private static final String[] COLUMNAS_TABLA = {"ID", "Nombre", "Apellido", "Carrera", "Promedio"};
     private static final int INDICE_PROMEDIO = 4;
+    
+    private static final String[] CURSOS_DEFAULT = {"BDA150", "SIS101", "FIS201"};
+    private static final String[] ESTADOS_MATRICULA = {OPCION_SELECCIONAR, "Matriculado", "Inactivo", "Graduado"};
+    private static final String[] PROFESORES_DEFAULT = {
+        "Seleccionar...",
+        "Dr. Isaias Mendoza",
+        "Ing. Ana María Gómez",
+        "Lic. Juana Silva"
+    };
 
     // ── Componentes UI - Búsqueda por nombre ────────────────────────────────────
     private JTextField             txtNombre;
@@ -65,11 +94,32 @@ public class EstudianteView extends JFrame {
     private JSpinner               spinPromedio;
     private JButton                btnAgregar;
 
+    // -- Componentes UI - Cursos
+    private JComboBox<String> comboCursos;
+    private JButton btnVerEstudiantesCurso;
+    private JButton btnInscribirCurso;
+    private JLabel lblProfesorAsignado;
+    
+    // ── Componentes UI - Profesores ────────────────────────────────────────────
+    private JTextField               txtNombreProfesor;
+    private JSpinner                 spinnerSalarioBase;
+    private JButton                  btnAgregarProfesor;
+    private JComboBox<String>        comboProfesores;
+    private JButton                  btnVerCursosProfesor;
+    private JComboBox<String>        comboCursosAsignar;
+    private JButton                  btnAsignarCurso;
+
+    // ── Componentes UI - Estado de Matrícula ────────────────────────────────────
+    private JComboBox<String>        comboEstadoMatricula;
+    private JButton                  btnBuscarPorEstado;
+    private JButton                  btnCambiarEstado;
+
     // ── Componentes UI - Resultados y Estado ────────────────────────────────────
     private JTable                 tblResultados;
     private DefaultTableModel      modeloTabla;
     private JLabel                 lblEstado;
     private JLabel                 lblTotalEstudiantes;
+    
 
     // ── Controlador ───────────────────────────────────────────────────────────
     private EstudianteController controlador;
@@ -94,7 +144,11 @@ public class EstudianteView extends JFrame {
         // ────────────────────────────────────────────────────────────────────────
         // PANEL SUPERIOR: Búsqueda y Agregar (con GridLayout)
         // ────────────────────────────────────────────────────────────────────────
-
+        
+        //Aqui ajusto el panel para que todo quede ajustado en vertical
+        JPanel panelSuperior = new JPanel();
+        panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.Y_AXIS));
+        
         // Panel búsqueda por nombre (Fila 1)
         JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         panelBusqueda.setBorder(BorderFactory.createTitledBorder(TITULO_PANEL_BUSQUEDA));
@@ -167,12 +221,59 @@ public class EstudianteView extends JFrame {
         panelAgregar.add(lblAgregarPromedio);
         panelAgregar.add(spinPromedio);
         panelAgregar.add(btnAgregar);
-
-        // Panel superior con GridLayout (3 filas, 1 columna)
-        JPanel panelSuperior = new JPanel(new GridLayout(3, 1, 5, 5));
+        
+        //Panel cursos
+        JPanel panelCursos = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panelCursos.setBorder(BorderFactory.createTitledBorder(TITULO_PANEL_CURSOS));
+ 
+        JLabel lblCurso = new JLabel(LABEL_CURSO);
+        comboCursos = new JComboBox<>(CURSOS_DEFAULT);
+        btnVerEstudiantesCurso = new JButton(BOTON_VER_ESTUDIANTES);
+        btnInscribirCurso = new JButton(BOTON_INSCRIBIR_CURSO);
+        JLabel lblInfo = new JLabel("Primero busque y seleccione un estudiante en la tabla");
+        lblInfo.setForeground(Color.GRAY);
+        JLabel lblProfeAsignado = new JLabel("Profesor Asignado (ninguno)");
+        lblProfeAsignado.setForeground(Color.BLUE);
+        lblProfeAsignado.setFont(lblProfeAsignado.getFont().deriveFont(Font.BOLD));
+        
+        panelCursos.add(lblCurso);
+        panelCursos.add(comboCursos);
+        panelCursos.add(btnVerEstudiantesCurso);
+        panelCursos.add(btnInscribirCurso);
+        panelCursos.add(lblInfo);
+        panelCursos.add(lblProfeAsignado);
+        
+        //Panel Profesores
+        JPanel panelProfesores = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panelProfesores.setBorder(BorderFactory.createTitledBorder(TITULO_PANEL_PROFESORES));
+        
+        JLabel lblProfesor = new JLabel(LABEL_NOMBRE);
+        txtNombreProfesor = new JTextField(8);
+        spinnerSalarioBase = new JSpinner(new SpinnerNumberModel(3000000, 1000000, 20000000, 500000));
+        btnAgregarProfesor = new JButton(BOTON_AGREGAR_PROFESOR);
+        JLabel lblProfesor1 = new JLabel(LABEL_PROFESOR);
+        comboProfesores = new JComboBox<>(PROFESORES_DEFAULT);
+        btnVerCursosProfesor = new JButton(BOTON_VER_CURSOS_PROF);
+        JLabel lblCursoAsignar = new JLabel("Curso a Asignar");
+        comboCursosAsignar = new JComboBox<>(CURSOS_DEFAULT);
+        btnAsignarCurso = new JButton(BOTON_ASIGNAR_CURSO);
+        
+        panelProfesores.add(lblProfesor);
+        panelProfesores.add(txtNombreProfesor);
+        panelProfesores.add(spinnerSalarioBase);
+        panelProfesores.add(btnAgregarProfesor);
+        panelProfesores.add(lblProfesor1);
+        panelProfesores.add(comboProfesores);
+        panelProfesores.add(btnVerCursosProfesor);
+        panelProfesores.add(lblCursoAsignar);
+        panelProfesores.add(comboCursosAsignar);
+        panelProfesores.add(btnAsignarCurso);
+        
         panelSuperior.add(panelBusqueda);
         panelSuperior.add(panelCarrera);
         panelSuperior.add(panelAgregar);
+        panelSuperior.add(panelCursos);
+        panelSuperior.add(panelProfesores);
 
         // ────────────────────────────────────────────────────────────────────────
         // PANEL CENTRAL: Tabla de resultados
@@ -219,6 +320,17 @@ public class EstudianteView extends JFrame {
 
     // ── Métodos de inicialización ─────────────────────────────────────────────
 
+    
+    private void cargarProfesores() {
+        if (controlador != null) {
+            comboProfesores.removeAllItems();
+            String[] profesores = controlador.obtenerListaProfesores();
+            for (String prof : profesores) {
+                comboProfesores.addItem(prof);
+            }
+        }
+    }
+    
     /**
      * Carga las carreras disponibles desde el controlador al combo de búsqueda.
      */
@@ -342,6 +454,7 @@ public class EstudianteView extends JFrame {
         cargarCarreras();
         cargarCarrerasAgregar();
         actualizarTotalEstudiantes();
+        cargarProfesores();
     }
 
 
