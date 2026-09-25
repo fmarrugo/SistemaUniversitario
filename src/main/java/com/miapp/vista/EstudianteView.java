@@ -249,6 +249,7 @@ public class EstudianteView extends JFrame {
         
         JLabel lblProfesor = new JLabel(LABEL_NOMBRE);
         txtNombreProfesor = new JTextField(8);
+        JLabel lblSalario = new JLabel(LABEL_SALARIO);
         spinnerSalarioBase = new JSpinner(new SpinnerNumberModel(3000000, 1000000, 20000000, 500000));
         btnAgregarProfesor = new JButton(BOTON_AGREGAR_PROFESOR);
         JLabel lblProfesor1 = new JLabel(LABEL_PROFESOR);
@@ -260,6 +261,7 @@ public class EstudianteView extends JFrame {
         
         panelProfesores.add(lblProfesor);
         panelProfesores.add(txtNombreProfesor);
+        panelProfesores.add(lblSalario);
         panelProfesores.add(spinnerSalarioBase);
         panelProfesores.add(btnAgregarProfesor);
         panelProfesores.add(lblProfesor1);
@@ -269,11 +271,26 @@ public class EstudianteView extends JFrame {
         panelProfesores.add(comboCursosAsignar);
         panelProfesores.add(btnAsignarCurso);
         
+        //Panel Estado
+        JPanel panelEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        panelEstado.setBorder(BorderFactory.createTitledBorder(TITULO_PANEL_ESTADO));
+        
+        JLabel lblEstado = new JLabel(LABEL_ESTADO);
+        comboEstadoMatricula = new JComboBox<>(ESTADOS_MATRICULA);
+        btnBuscarPorEstado = new JButton(BOTON_BUSCAR_ESTADO);
+        btnCambiarEstado = new JButton(BOTON_CAMBIAR_ESTADO);
+        
+        panelEstado.add(lblEstado);
+        panelEstado.add(comboEstadoMatricula);
+        panelEstado.add(btnBuscarPorEstado);
+        panelEstado.add(btnCambiarEstado);
+        
         panelSuperior.add(panelBusqueda);
         panelSuperior.add(panelCarrera);
         panelSuperior.add(panelAgregar);
         panelSuperior.add(panelCursos);
         panelSuperior.add(panelProfesores);
+        panelSuperior.add(panelEstado);
 
         // ────────────────────────────────────────────────────────────────────────
         // PANEL CENTRAL: Tabla de resultados
