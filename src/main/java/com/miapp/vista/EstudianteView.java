@@ -279,11 +279,14 @@ public class EstudianteView extends JFrame {
         comboEstadoMatricula = new JComboBox<>(ESTADOS_MATRICULA);
         btnBuscarPorEstado = new JButton(BOTON_BUSCAR_ESTADO);
         btnCambiarEstado = new JButton(BOTON_CAMBIAR_ESTADO);
+        JLabel lblInfoEstado = new JLabel("(\"Cambiar estado\" requiere seleccionar un estudiante)");
+        lblInfoEstado.setForeground(Color.GRAY);
         
         panelEstado.add(lblEstado);
         panelEstado.add(comboEstadoMatricula);
         panelEstado.add(btnBuscarPorEstado);
         panelEstado.add(btnCambiarEstado);
+        panelEstado.add(lblInfoEstado);
         
         panelSuperior.add(panelBusqueda);
         panelSuperior.add(panelCarrera);
@@ -291,7 +294,7 @@ public class EstudianteView extends JFrame {
         panelSuperior.add(panelCursos);
         panelSuperior.add(panelProfesores);
         panelSuperior.add(panelEstado);
-
+      
         // ────────────────────────────────────────────────────────────────────────
         // PANEL CENTRAL: Tabla de resultados
         // ────────────────────────────────────────────────────────────────────────
