@@ -381,7 +381,7 @@ public class EstudianteView extends JFrame {
      * Método que encapsula la inicialización de eventos.
      */
     private void initEventos() {
-        // Evento: buscar por nombre
+        // Evento: Buscar por nombre
         btnBuscar.addActionListener((ActionEvent e) -> {
             if (controlador != null) {
                 controlador.buscarEstudiante(txtNombre.getText().trim());
@@ -390,7 +390,7 @@ public class EstudianteView extends JFrame {
 
         txtNombre.addActionListener((ActionEvent e) -> btnBuscar.doClick());
 
-        // Evento: buscar por carrera
+        // Evento: Buscar por carrera
         btnBuscarCarrera.addActionListener((ActionEvent e) -> {
             if (controlador != null) {
                 String carriSelected = (String) cmbCarrera.getSelectedItem();
@@ -402,12 +402,10 @@ public class EstudianteView extends JFrame {
             }
         });
 
-        // Evento: limpiar búsqueda
-        btnLimpiar.addActionListener((ActionEvent e) -> {
-            limpiarBusqueda();
-        });
+        // Evento: Limpiar
+        btnLimpiar.addActionListener((ActionEvent e) -> limpiarBusqueda());
 
-        // Evento: agregar nuevo estudiante
+        // Evento: Agregar estudiante
         btnAgregar.addActionListener((ActionEvent e) -> {
             if (controlador != null) {
                 String nombre = txtAgregarNombre.getText().trim();
@@ -416,13 +414,98 @@ public class EstudianteView extends JFrame {
                 double promedio = (double) spinPromedio.getValue();
 
                 if (controlador.agregarEstudiante(nombre, apellido, carrera, promedio)) {
-                    // Limpiar formulario
                     txtAgregarNombre.setText("");
                     txtAgregarApellido.setText("");
                     cmbAgregarCarrera.setSelectedIndex(0);
                     spinPromedio.setValue(3.0);
                     actualizarTotalEstudiantes();
                 }
+            }
+        });
+
+        // Evento: Ver estudiantes de un curso
+        btnVerEstudiantesCurso.addActionListener((ActionEvent e) -> {
+            if (controlador != null) {
+                String curso = (String) comboCursos.getSelectedItem();
+                controlador.buscarEstudiantesPorCurso(curso);
+            }
+        });
+
+        // Evento: Inscribir estudiante seleccionado en un curso
+        btnInscribirCurso.addActionListener((ActionEvent e) -> {
+            int filaSel = tblResultados.getSelectedRow();
+            if (filaSel != -1 && controlador != null) {
+                int idEstudiante = Integer.parseInt(tblResultados.getValueAt(filaSel, 0).toString());
+                String curso = (String) comboCursos.getSelectedItem();
+                controlador.inscribirEstudianteEnCurso(idEstudiante, curso);
+            } else {
+                mostrarError("Seleccione un estudiante de la tabla para inscribirlo.");
+            }
+        });
+
+        // Evento: Agregar nuevo profesor
+        btnAgregarProfesor.addActionListener((ActionEvent e) -> {
+            if (controlador != null) {
+                String nombre = txtNombreProfesor.getText().trim();
+                double salario = (double) spinnerSalarioBase.getValue();
+                if (controlador.agregarProfesor(nombre, salario)) {
+                    txtNombreProfesor.setText("");
+                    spinnerSalarioBase.setValue(3000000);
+                    cargarProfesores();
+                }
+            }
+        });
+
+        // Evento: Ver cursos a cargo de un profesor
+        btnVerCursosProfesor.addActionListener((ActionEvent e) -> {
+            if (controlador != null) {
+                String profeSel = (String) comboProfesores.getSelectedItem();
+                if (profeSel != null && !profeSel.equals(OPCION_SELECCIONAR)) {
+                    controlador.verCursosDeProfesor(profeSel);
+                } else {
+                    mostrarError("Seleccione un profesor válido.");
+                }
+            }
+        });
+
+        // Evento: Asignar profesor a un curso
+        btnAsignarCurso.addActionListener((ActionEvent e) -> {
+            if (controlador != null) {
+                String profe = (String) comboProfesores.getSelectedItem();
+                String curso = (String) comboCursosAsignar.getSelectedItem();
+                if (profe != null && !profe.equals(OPCION_SELECCIONAR)) {
+                    controlador.asignarProfesorACurso(profe, curso);
+                } else {
+                    mostrarError("Seleccione un profesor válido.");
+                }
+            }
+        });
+
+        // Evento: Buscar por estado de matrícula
+        btnBuscarPorEstado.addActionListener((ActionEvent e) -> {
+            if (controlador != null) {
+                String estado = (String) comboEstadoMatricula.getSelectedItem();
+                if (estado != null && !estado.equals(OPCION_SELECCIONAR)) {
+                    controlador.buscarEstudiantesPorEstado(estado);
+                } else {
+                    mostrarError("Seleccione un estado de matrícula válido.");
+                }
+            }
+        });
+
+        // Evento: Cambiar estado de matrícula del estudiante seleccionado
+        btnCambiarEstado.addActionListener((ActionEvent e) -> {
+            int filaSel = tblResultados.getSelectedRow();
+            if (filaSel != -1 && controlador != null) {
+                int idEstudiante = Integer.parseInt(tblResultados.getValueAt(filaSel, 0).toString());
+                String nuevoEstado = (String) comboEstadoMatricula.getSelectedItem();
+                if (nuevoEstado != null && !nuevoEstado.equals(OPCION_SELECCIONAR)) {
+                    controlador.cambiarEstadoMatricula(idEstudiante, nuevoEstado);
+                } else {
+                    mostrarError("Seleccione un estado de matrícula válido.");
+                }
+            } else {
+                mostrarError("Seleccione un estudiante de la tabla para cambiar su estado.");
             }
         });
     }
@@ -467,14 +550,17 @@ public class EstudianteView extends JFrame {
     public String getNombreBuscado() {
         return txtNombre.getText().trim();
     }
-
-   
+    
+    public void setProfesorAsignado(String nombreProfesor) {
+        lblProfesorAsignado.setText("Profesor Asignado: " + nombreProfesor);
+    }
+    
     public void setControlador(EstudianteController controlador) {
         this.controlador = controlador;
         cargarCarreras();
         cargarCarrerasAgregar();
-        actualizarTotalEstudiantes();
         cargarProfesores();
+        actualizarTotalEstudiantes();
     }
 
 

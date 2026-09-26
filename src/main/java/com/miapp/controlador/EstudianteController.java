@@ -2,12 +2,12 @@ package com.miapp.controlador;
 
 import com.miapp.modelo.Curso;
 import com.miapp.modelo.Estudiante;
+import com.miapp.modelo.Profesor;
 import com.miapp.servicios.IBuscador;
 import com.miapp.vista.EstudianteView;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class EstudianteController implements IBuscador {
 
@@ -22,11 +22,13 @@ public class EstudianteController implements IBuscador {
 
     // ── Array de estudiantes (fuente de datos) ────────────────────────────────
     private Estudiante[] estudiantes;
+    private List<Profesor> listaProfesores;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
     public EstudianteController(EstudianteView vista) {
         this.vista = vista;
+        this.listaProfesores = new ArrayList<>();
         // Primero cargar datos (inicializar estudiantes[])
         cargarDatos();
         // Luego asignar controlador a la vista (ahora es seguro acceder a estudiantes[])
@@ -148,7 +150,6 @@ public class EstudianteController implements IBuscador {
             String.format("%.2f", e.getPromedio())
         };
     }
-
   
     private List<Object[]> convertirAFilas(List<Estudiante> lista) {
         List<Object[]> filas = new ArrayList<>();
@@ -194,7 +195,6 @@ public class EstudianteController implements IBuscador {
     public final int obtenerTotalEstudiantes() {
         return Estudiante.getTotalEstudiantes();
     }
-
    
     public boolean agregarEstudiante(String nombre, String apellido, String carrera, double promedio) {
         // Validación de datos
@@ -228,6 +228,133 @@ public class EstudianteController implements IBuscador {
 
         return true;
     } 
+    
+    public void buscarEstudiantesPorCurso(String codigoCurso) {
+        if (codigoCurso == null || codigoCurso.isEmpty()) {
+            vista.mostrarError("Seleccione un curso válido.");
+            return;
+        }
 
+        List<Estudiante> resultados = new ArrayList<>();
+        for (Estudiante e : estudiantes) {
+            if (e != null && e.getCursosInscritos() != null && e.getCursosInscritos().contains(codigoCurso)) {
+                resultados.add(e);
+            }
+        }
+
+        String nombreProfesor = "Ninguno";
+        for (Profesor p : listaProfesores) {
+            if (p != null && p.getCursosAsignados() != null && p.getCursosAsignados().contains(codigoCurso)) {
+                nombreProfesor = p.getNombre();
+                break;
+            }
+        }
+
+        vista.setProfesorAsignado(nombreProfesor);
+        vista.mostrarEstudiantes(convertirAFilas(resultados));
+    }
+
+    public void inscribirEstudianteEnCurso(int idEstudiante, String codigoCurso) {
+        Estudiante e = obtenerEstudiantePorId(idEstudiante);
+        if (e == null) {
+            vista.mostrarError("El estudiante seleccionado no fue encontrado.");
+            return;
+        }
+
+        if (e.getCursosInscritos() == null) {
+            e.setCursosInscritos(new ArrayList<>());
+        }
+
+        if (e.getCursosInscritos().contains(codigoCurso)) {
+            vista.mostrarError("El estudiante ya se encuentra inscrito en " + codigoCurso + ".");
+            return;
+        }
+
+        e.getCursosInscritos().add(codigoCurso);
+        vista.mostrarMensaje("Estudiante " + e.getNombre().trim() + " " + e.getApellido().trim() +
+                            " inscrito exitosamente en el curso " + codigoCurso + ".");
+    }
+
+    public boolean agregarProfesor(String nombre, double salarioBase) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            vista.mostrarError("El nombre del profesor no puede estar vacío.");
+            return false;
+        }
+
+        for (Profesor p : listaProfesores) {
+            if (p != null && p.getNombre().equalsIgnoreCase(nombre.trim())) {
+                vista.mostrarError("Ya existe un profesor registrado con ese nombre.");
+                return false;
+            }
+        }
+
+        listaProfesores.add(new Profesor(nombre.trim(), salarioBase));
+        vista.mostrarMensaje("Profesor '" + nombre + "' registrado con éxito con un salario de $" + salarioBase);
+        return true;
+    }
+
+    public void verCursosDeProfesor(String nombreProfesor) {
+        for (Profesor p : listaProfesores) {
+            if (p != null && p.getNombre().equals(nombreProfesor)) {
+                if (p.getCursosAsignados() == null || p.getCursosAsignados().isEmpty()) {
+                    vista.mostrarMensaje("El profesor " + nombreProfesor + " no tiene cursos asignados.");
+                } else {
+                    String cursos = String.join(", ", p.getCursosAsignados());
+                    vista.mostrarMensaje("Cursos a cargo de " + nombreProfesor + ": [" + cursos + "]");
+                }
+                return;
+            }
+        }
+        vista.mostrarError("No se encontró el profesor seleccionado.");
+    }
+
+    public void asignarProfesorACurso(String nombreProfesor, String codigoCurso) {
+        Profesor profEncontrado = null;
+        for (Profesor p : listaProfesores) {
+            if (p != null && p.getNombre().equals(nombreProfesor)) {
+                profEncontrado = p;
+                break;
+            }
+        }
+
+        if (profEncontrado == null) {
+            vista.mostrarError("El profesor seleccionado no existe.");
+            return;
+        }
+
+        if (profEncontrado.getCursosAsignados() == null) {
+            profEncontrado.setCursosAsignados(new ArrayList<>());
+        }
+
+        if (!profEncontrado.getCursosAsignados().contains(codigoCurso)) {
+            profEncontrado.getCursosAsignados().add(codigoCurso);
+        }
+
+        vista.setProfesorAsignado(profEncontrado.getNombre());
+        vista.mostrarMensaje("Se ha asignado al profesor " + nombreProfesor + " el curso " + codigoCurso + ".");
+    }
+
+    public void buscarEstudiantesPorEstado(String estado) {
+        List<Estudiante> resultados = new ArrayList<>();
+        for (Estudiante e : estudiantes) {
+            if (e != null && e.getEstadoMatricula() != null && e.getEstadoMatricula().equalsIgnoreCase(estado)) {
+                resultados.add(e);
+            }
+        }
+        vista.mostrarEstudiantes(convertirAFilas(resultados));
+    }
+
+    public void cambiarEstadoMatricula(int idEstudiante, String nuevoEstado) {
+        Estudiante e = obtenerEstudiantePorId(idEstudiante);
+        if (e == null) {
+            vista.mostrarError("Seleccione un estudiante válido de la tabla.");
+            return;
+        }
+
+        e.setEstadoMatricula(nuevoEstado);
+        vista.mostrarMensaje("Estado de matrícula actualizado a '" + nuevoEstado + "' para " +
+                             e.getNombre().trim() + " " + e.getApellido().trim() + ".");
+    }
+}
 
 }
