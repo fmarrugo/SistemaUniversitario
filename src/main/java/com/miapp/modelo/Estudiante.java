@@ -94,6 +94,9 @@ public class Estudiante extends Persona implements IBuscador {
     }
 
     public List<Curso> getCursosInscritos() {
+        if (cursosInscritos == null) {
+            cursosInscritos = new ArrayList<>();
+        }
         return cursosInscritos;
     }
 
